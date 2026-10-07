@@ -1,0 +1,20 @@
+name: Sync emulab mirror from upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  sync-emulab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone from Utah GitLab
+        run: git clone --mirror https://gitlab.flux.utah.edu/emulab/emulab-devel.git repo
+
+      - name: Push to GitHub mirror
+        run: |
+          cd repo
+          git push --prune https://x-access-token:${{ secrets.EMULAB_MIRROR_TOKEN }}@github.com/chuckcranor/emulab-devel.git \
+            'refs/heads/*:refs/heads/*' \
+            'refs/tags/*:refs/tags/*'
